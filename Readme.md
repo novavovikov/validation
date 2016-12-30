@@ -2,46 +2,77 @@
 ## Активация плагина
 $('form').validation();
 
+
 #### Для валидирования input необходимо вписать следующие data-атрибуты:
-data-validation="name"
-data-validation="email"
-data-validation="phone"
++ data-validation="name"
++ data-validation="email"
++ data-validation="phone"
+
 
 ### Опции
 
-##### email: 
+> email: 
+
 Значение по умолчанию: /^[a-z0-9_-]+@[a-z0-9-]+\.([a-z]{1,20}\.)?[a-z]{2,20}$/i
+***
 
 
-##### errorEmail
+> errorEmail
+
 Значение по умолчанию: 'Неправильный формат электронной почты. E-mail адрес должен содержать символ @ и хотя бы одну точку'
+***
 
 
-##### notificationEmail
+
+> notificationEmail
+
 Значение по умолчанию: 'Поле e-mail не должно быть пустым'
+***
 
 
-##### phone
+> phone
+
 Значение по умолчанию: /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/i
+***
 
-##### notificationPhone
+> notificationPhone
+
 Значение по умолчанию: 'Неверный формат номера телефона!'
+***
 
-##### errorPhone
+> errorPhone
+
 Значение по умолчанию: 'Поле для ввода номера телефона не должно быть пустым'
+***
 
-##### name
-Значение по умолчанию: /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/i
+> name
+
+Значение по умолчанию:
+/^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/i
+***
 
 
-##### notificationName
+> notificationName
+
 Значение по умолчанию: 'Неверный формат имени!'
-##### errorName
+***
+
+
+
+> errorName
+
 Значение по умолчанию: 'Поле для ввода имени не должно быть пустым'
+***
 
 
-##### showNotice
+> showNotice
+
 Значение по умолчанию: true
+***
 
-##### noticeClass
+
+
+> noticeClass
+
 Значение по умолчанию: 'notice'
+***
