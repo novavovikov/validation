@@ -26,7 +26,7 @@ __________________________________________________
         notificationPhone: 'Неверный формат номера телефона!',
         errorPhone: 'Поле для ввода номера телефона не должно быть пустым',
 
-        name: /^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$/i,
+        name: /^[а-яА-ЯёЁa-zA-Z][а-яА-ЯёЁa-zA-Z0-9-_\.]{1,20}$/i,
         notificationName: 'Неверный формат имени!',
         errorName: 'Поле для ввода имени не должно быть пустым',
 
@@ -34,15 +34,15 @@ __________________________________________________
         noticeClass: 'notice'
     };
 
-    var status = {
-        email: true,
-        phone: true,
-        name: true
-    }
-
-    var statusForm = true;
-
     $.fn.validation = function(options) {
+
+        var status = {
+            email: true,
+            phone: true,
+            name: true
+        }
+
+        var statusForm = true;
 
         if (this.length == 0) return this;
 
@@ -72,35 +72,34 @@ __________________________________________________
             validateFactory: function(type, notification, error) {
                 node[type].each(function() {
                     var $this = $(this),
-                        value = $this.val();
+                    value = $this.val();
 
                     if (value !='') {
                         if(value.search(settings[type]) == 0) {
                             status[type] = true;
                         } else {
-                            // methods.showNotice('notification', notification, $this);
+                            methods.showNotice('notification', notification, $this);
                             status[type] = 'notification';
-                            console.log(notification);
+                            // alert(notification);
                         }
                     } else {
-                        // methods.showNotice('error', error, $this);
+                        methods.showNotice('error', error, $this);
                         status[type] = 'error';
-                        console.log(error);
+                        // alert(error);
                     }
                 })
             },
 
             validateItems: function() {
-                if (node.name.length > 0) {
-                    methods.validateFactory('name', settings.notificationName, settings.errorName);
-                }
-
-                if (node.email.length > 0) {
-                    methods.validateFactory('email', settings.notificationEmail, settings.errorEmail);
-                }
 
                 if (node.phone.length > 0) {
                     methods.validateFactory('phone', settings.notificationPhone, settings.errorPhone);
+                }
+                if (node.email.length > 0) {
+                    methods.validateFactory('email', settings.notificationEmail, settings.errorEmail);
+                }
+                if (node.name.length > 0) {
+                    methods.validateFactory('name', settings.notificationName, settings.errorName);
                 }
             },
 
@@ -132,17 +131,26 @@ __________________________________________________
                     $('body').append('<div class=' + settings.noticeClass + '></div>');
 
                     notice = $('body').children('.' + settings.noticeClass);
+                } else {
+                    notice = $('body').children('.' + settings.noticeClass);
                 }
 
                 notice.css({
                     display: 'block',
                     position: 'absolute',
-                    top: el.offset().top,
+                    top: el.offset().top + el.height(),
                     left: el.offset().left
                 });
 
                 notice.removeClass().addClass(settings.noticeClass).addClass(settings.noticeClass + '--' + type);
                 notice.text(message);
+                el.focus();
+
+                $(window).click(methods.hideNotice);
+                $('.fancybox-overlay').click(methods.hideNotice);
+            },
+            hideNotice: function() {
+                notice.hide();
             }
         };
 
