@@ -13,7 +13,6 @@ __________________________________________________
 
 */
 
-
 (function($) {
 
     var defaults = {
@@ -31,7 +30,19 @@ __________________________________________________
         errorName: 'Поле для ввода имени не должно быть пустым',
 
         showNotice: true,
-        noticeClass: 'notice'
+        noticeClass: 'notice',
+        callbackNotice: function() {
+
+        },
+
+        ajax: true,
+        ajaxURL: 'mail.php',
+        messageClass: 'sendmessage',
+        timeoutMessage: 5000,
+        callbackMessage: function() {
+            
+        }
+
     };
 
     $.fn.validation = function(options) {
@@ -40,26 +51,27 @@ __________________________________________________
             email: true,
             phone: true,
             name: true
-        }
+        };
 
-        var statusForm = true;
+        var _statusForm = true;
 
         if (this.length == 0) return this;
 
         // support mutltiple elements
         if (this.length > 1) {
-            this.each(function() { $(this).validation(options) });
+            this.each(function() {
+                $(this).validation(options);
+            });
             return this;
         }
 
         var el = this;
         var node = {};
-        var notice = {};
 
         var settings = $.extend({}, defaults, options);
 
         var methods = {
-            init: function() {
+            init: function init() {
                 node.form = el;
                 node.email = node.form.find('[data-validation="email"]');
                 node.phone = node.form.find('[data-validation="phone"]');
@@ -67,30 +79,27 @@ __________________________________________________
 
                 //let's go
                 node.form.on('submit', methods.validateForm);
-
             },
-            validateFactory: function(type, notification, error) {
+            validateFactory: function validateFactory(type, notification, error) {
                 node[type].each(function() {
                     var $this = $(this),
                     value = $this.val();
 
-                    if (value !='') {
-                        if(value.search(settings[type]) == 0) {
+                    if (value != '') {
+                        if (value.search(settings[type]) == 0) {
                             status[type] = true;
                         } else {
                             methods.showNotice('notification', notification, $this);
                             status[type] = 'notification';
-                            // alert(notification);
                         }
                     } else {
                         methods.showNotice('error', error, $this);
                         status[type] = 'error';
-                        // alert(error);
                     }
-                })
+                });
             },
 
-            validateItems: function() {
+            validateItems: function validateItems() {
 
                 if (node.phone.length > 0) {
                     methods.validateFactory('phone', settings.notificationPhone, settings.errorPhone);
@@ -103,59 +112,97 @@ __________________________________________________
                 }
             },
 
-            statusForm: function() {
-                statusForm = [];
+            statusForm: function statusForm() {
+                _statusForm = [];
 
                 for (var key in status) {
-                    statusForm.push(status[key]);
+                    _statusForm.push(status[key]);
                 }
 
-                statusForm = statusForm.every(function(item) {
+                _statusForm = _statusForm.every(function(item) {
                     return item === true;
-                })
+                });
 
-                return statusForm;
+                return _statusForm;
             },
 
-            validateForm: function () {
+            validateForm: function validateForm() {
 
                 methods.validateItems();
 
                 methods.statusForm();
 
-                return statusForm;
+                if (settings.ajax === true) {
+                    if (_statusForm === true) {
+                        methods.sendRequest();
+                    }
+
+                    return false;
+                } else {
+                    return _statusForm;
+                }
             },
 
-            showNotice: function(type, message, el) {
+            showNotice: function showNotice(type, message, el) {
                 if ($('.' + settings.noticeClass).length == 0) {
                     $('body').append('<div class=' + settings.noticeClass + '></div>');
 
-                    notice = $('body').children('.' + settings.noticeClass);
+                    node.notice = $('body').children('.' + settings.noticeClass);
                 } else {
-                    notice = $('body').children('.' + settings.noticeClass);
+                    node.notice = $('body').children('.' + settings.noticeClass);
                 }
 
-                notice.css({
+                node.notice.css({
                     display: 'block',
                     position: 'absolute',
                     top: el.offset().top + el.height(),
                     left: el.offset().left
                 });
 
-                notice.removeClass().addClass(settings.noticeClass).addClass(settings.noticeClass + '--' + type);
-                notice.text(message);
+                node.notice.removeClass().addClass(settings.noticeClass).addClass(settings.noticeClass + '--' + type);
+                node.notice.text(message);
                 el.focus();
 
                 $(window).click(methods.hideNotice);
-                $('.fancybox-overlay').click(methods.hideNotice);
+                settings.callbackNotice();
             },
-            hideNotice: function() {
-                notice.hide();
+            hideNotice: function hideNotice() {
+                node.notice.remove();
+            },
+            sendRequest: function() {
+                $.ajax({
+                    url: settings.ajaxURL,
+                    method: 'POST',
+                    data: node.form.serialize(),
+                    success: function (answer) {
+                        methods.showMessage(answer);
+                    }, error: function() {
+                        methods.showMessage('Ошибка, повторите запрос позже!');
+                    }
+                });
+            },
+            showMessage: function(text) {
+                if ($('.' + settings.messageClass).length == 0) {
+                    $('body').append('<div class=' + settings.messageClass + '></div>');
+
+                    node.message = $('body').children('.' + settings.messageClass);
+                } else {
+                    node.message = $('body').children('.' + settings.messageClass);
+                }
+
+                node.message.html(text);
+                node.message.show();
+
+                methods.hideMessage();
+            },
+            hideMessage: function() {
+                setTimeout(function() {node.message.remove()}, settings.timeoutMessage);
+                node.form.trigger('reset');
+
+                settings.callbackMessage();
             }
         };
 
         methods.init();
-
     };
-
 })(jQuery);

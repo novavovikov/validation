@@ -76,3 +76,33 @@ $('form').validation();
 
 Значение по умолчанию: 'notice'
 ***
+
+
+> callbackNotice
+
+Значение по умолчанию: ''
+***
+
+> ajax
+
+Значение по умолчанию: true
+***
+
+> ajaxURL
+
+Значение по умолчанию: 'mail.php'
+***
+
+> messageClass
+
+Значение по умолчанию: 'sendmessage'
+***
+> timeoutMessage
+
+Значение по умолчанию: 5000
+***
+
+> callbackMessage
+
+Значение по умолчанию: ''
+***
