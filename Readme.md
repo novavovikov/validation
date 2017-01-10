@@ -88,11 +88,6 @@ $('form').validation();
 Значение по умолчанию: true
 ***
 
-> ajaxURL
-
-Значение по умолчанию: 'mail.php'
-***
-
 > messageClass
 
 Значение по умолчанию: 'sendmessage'

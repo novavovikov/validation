@@ -36,7 +36,6 @@ __________________________________________________
         },
 
         ajax: true,
-        ajaxURL: 'mail.php',
         messageClass: 'sendmessage',
         timeoutMessage: 5000,
         callbackMessage: function() {
@@ -171,7 +170,7 @@ __________________________________________________
             },
             sendRequest: function() {
                 $.ajax({
-                    url: settings.ajaxURL,
+                    url: node.form.attr('action'),
                     method: 'POST',
                     data: node.form.serialize(),
                     success: function (answer) {
